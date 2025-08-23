@@ -436,6 +436,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Tech Stack:** Flutter • Supabase • GetX • Alpha Vantage API • Material Design 3 • PostgreSQL
 
-**Contact:** [your.email@domain.com](mailto:your.email@domain.com) | **Portfolio:** [yourwebsite.com](https://yourwebsite.com)
+
 
 
