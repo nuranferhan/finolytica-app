@@ -16,9 +16,16 @@
 <img src="https://img.shields.io/badge/Cross--Platform-Android%20%7C%20iOS%20%7C%20Windows%20%7C%20macOS%20%7C%20Linux-4CAF50?style=for-the-badge" alt="Cross Platform" />
 </div>
 
-## Project Overview
+<div align="center">
+  <img width="100%" alt="Image" src="https://github.com/user-attachments/assets/94ba2c11-b41f-4158-b77b-601f08e8b121" />
+</div>
 
-**Finolytica** *(Finance + Analytics)* is a comprehensive personal finance and investment tracking mobile application built with Flutter and Supabase. The application embodies the philosophy of **"Optimize Productivity, Maximize Financial Impact"** through its intelligent analytics, intuitive user interface, and real time market integration. This project demonstrates proficiency in modern mobile development while incorporating industry grade financial data services and advanced state management patterns.
+## Project Overview
+<div align="center">
+  <img width="30%" alt="Image" src="https://github.com/user-attachments/assets/87f135c0-ff40-4498-8dcb-9c9158bcf48d" />
+</div>
+
+**Finolytica** *(Finance + Analytics)* is a comprehensive personal finance and investment tracking mobile application built with Flutter and Supabase. The application embodies the philosophy of **"Productivity Focused, Profit Maximizing"** through its intelligent analytics, intuitive user interface, and real time market integration. This project demonstrates proficiency in modern mobile development while incorporating industry grade financial data services and advanced state management patterns.
 
 The development process followed a systematic approach, progressing from secure authentication implementation to advanced features like real time investment tracking and comprehensive spending analysis. Each phase focused on specific aspects of financial management, ensuring scalable architecture and maintainable code structure. The result is a production ready application that showcases modern Flutter development capabilities while solving real world personal finance challenges.
 
@@ -29,12 +36,22 @@ The application provides secure multi factor authentication and comprehensive pr
 
 **Authentication Features:**
 - **OAuth 2.0 Google Sign In** - Seamless social authentication
+<div align="center">
+  <img width="45%" alt="Image" src="https://github.com/user-attachments/assets/56d91a33-d239-451b-8f1e-c7d6637ad233" />
+</div>
+
 - **Email/Password Authentication** - Traditional secure login with validation
 - **Profile Management** - Comprehensive user data management
 - **Session Management** - Secure token handling with auto-refresh
 - **Data Privacy Controls** - GDPR-compliant user data management
 
 ### Comprehensive Transaction Management
+<div align="center">
+  <img width="27.8%" alt="Image 2" src="https://github.com/user-attachments/assets/500a32ba-536c-4abe-a0a4-aef2b39545de" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img width="28%" alt="Image 1" src="https://github.com/user-attachments/assets/9c493a09-abb3-4497-b0a1-91e1d59a348b" />
+</div>
+
 Core functionality centers around intelligent expense tracking with category based organization, recurring transaction automation and spending limit monitoring with proactive notifications.
 
 **Transaction Features:**
@@ -46,8 +63,13 @@ Core functionality centers around intelligent expense tracking with category bas
 - **Transaction Search** - Advanced filtering and search capabilities
 
 ### Advanced Analytics & Reporting System
-Professional grade financial analytics with interactive visualizations, trend analysis and comprehensive insights for better financial decision making.
+<div>
+  <img width="73%" alt="Image 2" src="https://github.com/user-attachments/assets/47c9b715-974e-49d7-89dd-96a0cef1aaaa" />
+  <img width="24.3%" alt="Image 1" src="https://github.com/user-attachments/assets/9634ec49-26fa-4ad5-bdf9-892465f289d8" />
+</div>
 
+Professional grade financial analytics with interactive visualizations, trend analysis and comprehensive insights for better financial decision making.
+ 
 **Interactive Chart Library:**
 - **Pie Charts** - Category based expense distribution analysis
 - **Bar Charts** - Weekly spending patterns with comparative analysis  
@@ -62,7 +84,35 @@ Professional grade financial analytics with interactive visualizations, trend an
 - **Category Performance** - Comparative spending analysis across time periods
 - **Custom Date Ranges** - Flexible reporting periods for detailed analysis
 
+### Advanced Savings Goals & Financial Planning
+<div align="center">
+  <img width="85%" alt="Image 2" src="https://github.com/user-attachments/assets/0ba9ba42-0536-4df8-a2bc-d422e902f3fa" />
+</div>
+
+Comprehensive savings goal management with automated progress tracking, milestone notifications and intelligent fund allocation synchronized with main transaction records.
+
+**Savings Goals Features:**
+- **Smart Goal Creation** - Target amount, deadline and category based goal setting
+- **Automated Progress Tracking** - Real time goal completion percentage calculation
+- **Transaction Synchronization** - Goal contributions automatically reflected in main transactions, money is allocated to target investments based on current budget
+<div align="center">
+  <img width="27.6%" alt="Image 2" src="https://github.com/user-attachments/assets/0e7c90aa-be79-4921-b1f2-1547fab98b08" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img width="27%" alt="Image 1" src="https://github.com/user-attachments/assets/3c4f276b-1452-4bdf-a0ab-f8caa4db1728" />
+</div>
+
+- **Milestone Notifications** - Progress alerts and completion celebrations
+- **Category based Goals** - Emergency fund, vacation, house, car and custom categories
+- **Visual Progress Indicators** - Circular progress bars and achievement badges
+- **Goal Analytics** - Completion rate analysis and saving patterns insights
+  
 ### Real Time Investment Portfolio Management
+<div align="center">
+  <img width="27.7%" alt="Image 2" src="https://github.com/user-attachments/assets/2e7debe3-3e9b-4add-b804-928cab7f6abe" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img width="27%" alt="Image 1" src="https://github.com/user-attachments/assets/8f0b6331-7b7b-4152-a53d-fed22b55f287" />
+</div>
+
 Comprehensive investment tracking with live market data, portfolio analytics and performance monitoring across multiple asset classes with intelligent watchlist capabilities.
 
 **Investment Features:**
@@ -73,18 +123,6 @@ Comprehensive investment tracking with live market data, portfolio analytics and
 - **Diversification Analysis** - Portfolio balance recommendations with risk scoring
 - **Exchange Rate Tracking** - Multi currency support with real time conversion
 - **Investment Goals** - Target based investment planning with progress tracking
-
-### Advanced Savings Goals & Financial Planning
-Comprehensive savings goal management with automated progress tracking, milestone notifications and intelligent fund allocation synchronized with main transaction records.
-
-**Savings Goals Features:**
-- **Smart Goal Creation** - Target amount, deadline and category based goal setting
-- **Automated Progress Tracking** - Real time goal completion percentage calculation
-- **Transaction Synchronization** - Goal contributions automatically reflected in main transactions
-- **Milestone Notifications** - Progress alerts and completion celebrations
-- **Category based Goals** - Emergency fund, vacation, house, car and custom categories
-- **Visual Progress Indicators** - Circular progress bars and achievement badges
-- **Goal Analytics** - Completion rate analysis and saving patterns insights
 
 ### Intelligent Financial Insights
 Advanced analytics system for intelligent financial analysis, personalized recommendations and spending pattern recognition.
@@ -141,6 +179,10 @@ The application integrates with **Alpha Vantage API** for comprehensive market d
 **Material Design 3 Implementation:**
 - **Dynamic Color Scheme** - Primary (#6C5CE7), Secondary (#74B9FF), Success (#6BCF7F)
 - **Dark/Light Mode** - Automatic theme switching with user preferences
+<div align="center">
+  <img width="100%" alt="Image" src="https://github.com/user-attachments/assets/7783b2b4-adfa-473b-9706-9909cbe10385" />
+</div>
+
 - **Card based UI** - Modern elevated design with 16px border radius
 - **Consistent Spacing** - 8dp grid system for optimal visual hierarchy
 
@@ -425,3 +467,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Tech Stack:** Flutter • Supabase • GetX • Alpha Vantage API • Material Design 3 • PostgreSQL
 
 **Contact:** [your.email@domain.com](mailto:your.email@domain.com) | **Portfolio:** [yourwebsite.com](https://yourwebsite.com)
+
