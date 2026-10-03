@@ -372,7 +372,7 @@ class InvestmentService {
       print('✅ Exchange rates update completed');
     } catch (e) {
       print('❌ Error in updateExchangeRates: $e');
-      await _updateMockRates();
+      
     }
   }
 
@@ -515,29 +515,6 @@ class InvestmentService {
     }
   }
 
-Future<void> _updateMockRates() async {
-  final mockRates = {
-    'USD': 33.45 + (DateTime.now().millisecond % 100 - 50) * 0.01,
-    'EUR': 36.20 + (DateTime.now().millisecond % 100 - 50) * 0.01,
-    'GBP': 42.15 + (DateTime.now().millisecond % 100 - 50) * 0.01,
-    'CHF': 37.80 + (DateTime.now().millisecond % 100 - 50) * 0.01,
-  };
-
-  for (var entry in mockRates.entries) {
-    try {
-      await _client
-          .from('exchange_rates')
-          .upsert({
-            'base_currency': 'TRY',
-            'target_currency': entry.key,
-            'rate': 1 / entry.value,
-            'last_updated': DateTime.now().toIso8601String(),
-          });
-    } catch (e) {
-      print('Error updating mock rate for ${entry.key}: $e');
-    }
-  }
-}
 
   Future<void> addDefaultWatchlistItems() async {
     final userId = SupabaseConfig.currentUser?.id;
