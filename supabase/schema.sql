@@ -5,7 +5,7 @@ create table if not exists public.users (
   avatar_url  text,
   currency    text not null default 'TRY',
   created_at  timestamptz not null default now()
-);
+); 
 
 create table if not exists public.categories (
   id          uuid primary key default gen_random_uuid(),
