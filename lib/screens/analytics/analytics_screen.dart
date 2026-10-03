@@ -702,6 +702,30 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
               fontWeight: FontWeight.w500,
             ),
           ),
+          if (budgetData['remainingDays'] > 0) ...[
+            SizedBox(height: 12),
+            Divider(),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.insights, size: 18, color: theme.primaryColor),
+                SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Günlük ortalama ${Helpers.formatCurrency(budgetData['dailyAverage'])}. '
+                    'Bu hızla ${budgetData['periodLabel']} sonunda yaklaşık '
+                    '${Helpers.formatCurrency(budgetData['projected'])} harcamış olacaksınız.',
+                    style: TextStyle(
+                      color: budgetData['projected'] > budgetData['budget'] &&
+                              budgetData['budget'] > 0
+                          ? Colors.orange
+                          : (isDark ? Colors.white70 : Colors.black54),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -941,29 +965,59 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
     };
   }
   
-  Map<String, dynamic> _calculateBudgetComparison() {
+   Map<String, dynamic> _calculateBudgetComparison() {
     final expenses = filteredTransactions.where((t) => t.type == 'expense');
     final totalSpent = expenses.fold(0.0, (sum, t) => sum + t.amount);
-    
-    final income = filteredTransactions.where((t) => t.type == 'income').fold(0.0, (sum, t) => sum + t.amount);
+
+    final income = filteredTransactions
+        .where((t) => t.type == 'income')
+        .fold(0.0, (sum, t) => sum + t.amount);
     final suggestedBudget = income * 0.7;
-    
-    final percentage = suggestedBudget > 0.0 ? (totalSpent / suggestedBudget) * 100.0 : 0.0;
-    
+
+    final percentage =
+        suggestedBudget > 0.0 ? (totalSpent / suggestedBudget) * 100.0 : 0.0;
+
     String message = '';
     if (percentage > 100.0) {
       message = 'Bütçenizi %${(percentage - 100.0).toStringAsFixed(1)} aştınız!';
     } else if (percentage > 80.0) {
-      message = 'Bütçenizin %${percentage.toStringAsFixed(1)}\'ini kullandınız. Dikkatli olun!';
+      message =
+          'Bütçenizin %${percentage.toStringAsFixed(1)}\'ini kullandınız. Dikkatli olun!';
     } else {
-      message = 'Bütçe kontrolünüz iyi! %${(100.0 - percentage).toStringAsFixed(1)} tasarruf ettiniz.';
+      message =
+          'Bütçe kontrolünüz iyi! %${(100.0 - percentage).toStringAsFixed(1)} tasarruf ettiniz.';
     }
-    
+
+    final now = DateTime.now();
+    int elapsedDays;
+    int totalDays;
+    String periodLabel;
+    if (selectedPeriod == 'monthly') {
+      elapsedDays = now.day;
+      totalDays = DateTime(now.year, now.month + 1, 0).day;
+      periodLabel = 'ay';
+    } else if (selectedPeriod == 'weekly') {
+      elapsedDays = now.weekday;
+      totalDays = 7;
+      periodLabel = 'hafta';
+    } else {
+      elapsedDays = 1;
+      totalDays = 1;
+      periodLabel = 'gün';
+    }
+    final dailyAverage = elapsedDays > 0 ? totalSpent / elapsedDays : 0.0;
+    final projectedSpent = dailyAverage * totalDays;
+    final remainingDays = totalDays - elapsedDays;
+
     return {
       'spent': totalSpent,
       'budget': suggestedBudget,
       'percentage': percentage,
       'message': message,
+      'projected': projectedSpent,
+      'dailyAverage': dailyAverage,
+      'remainingDays': remainingDays,
+      'periodLabel': periodLabel,
     };
   }
   
