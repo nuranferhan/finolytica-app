@@ -3,7 +3,7 @@
 <div align="center">
  <img src="https://img.shields.io/badge/Finolytica-Flutter%20Finance-4CAF50?style=for-the-badge" alt="Finolytica" />
  <img src="https://img.shields.io/badge/License-MIT-06B6D4?style=for-the-badge" alt="License" />
- <img src="https://img.shields.io/badge/Flutter-3.8.1+-02569B?style=for-the-badge&logo=flutter" alt="Flutter" />
+ <img src="https://img.shields.io/badge/Flutter-3.32+-02569B?style=for-the-badge&logo=flutter" alt="Flutter" />
  <img src="https://img.shields.io/badge/Supabase-Backend-3ECF8E?style=for-the-badge&logo=supabase" alt="Supabase" />
 </div>
 
@@ -32,7 +32,7 @@ The development process followed a systematic approach, progressing from secure 
 ## Key Features & Functionality
 
 ### Advanced User Management System
-The application provides secure multi factor authentication and comprehensive profile management with data privacy controls.
+The application provides secure authentication and comprehensive profile management with data privacy controls.
 
 **Authentication Features:**
 - **OAuth 2.0 Google Sign In** - Seamless social authentication
@@ -43,7 +43,6 @@ The application provides secure multi factor authentication and comprehensive pr
 - **Email/Password Authentication** - Traditional secure login with validation
 - **Profile Management** - Comprehensive user data management
 - **Session Management** - Secure token handling with auto-refresh
-- **Data Privacy Controls** - GDPR-compliant user data management
 
 ### Comprehensive Transaction Management
 <div align="center">
@@ -59,7 +58,6 @@ Core functionality centers around intelligent expense tracking with category bas
 - **Recurring Transactions** - Automated salary, rent and subscription tracking
 - **Spending Limits** - Category based budget enforcement with alerts
 - **Multi Currency Support** - Real time exchange rate conversion
-- **Offline Synchronization** - Local storage with cloud sync capabilities
 - **Transaction Search** - Advanced filtering and search capabilities
 
 ### Advanced Analytics & Reporting System
@@ -142,7 +140,6 @@ The server side architecture leverages **Supabase** as a Backend as a Service (B
 
 **Core Backend Architecture:**
 - **Supabase PostgreSQL** - Cloud-native relational database with advanced RLS policies
-- **Real time Subscriptions** - Live data updates using WebSocket connections  
 - **OAuth 2.0 Integration** - Secure Google authentication with JWT tokens
 - **Data Services Layer** – Supabase powered CRUD with manual API integration
 - **Advanced Database Triggers** - Automated goal completion, transaction synchronization
@@ -171,7 +168,6 @@ The application integrates with **Alpha Vantage API** for comprehensive market d
 - **Forex Exchange Rates** - Live currency conversion with 170+ currencies
 - **Cryptocurrency Tracking** - Bitcoin, Ethereum, and major altcoin prices
 - **Intelligent Rate Limiting** - Automated request throttling (5 requests/minute)
-- **Data Caching** - Local storage for offline access and performance
 - **Portfolio Analytics** - Profit/loss calculations with historical performance
 
 ### Design System & Theming
@@ -251,8 +247,8 @@ finolytica/
 ## Installation & Setup
 
 ### Prerequisites
-- **Flutter SDK** (v3.8.1 or higher) - [Install Flutter](https://docs.flutter.dev/get-started/install)
-- **Dart SDK** (v2.19.0 or higher) - Included with Flutter
+- **Flutter SDK** (v3.32 or higher) - [Install Flutter](https://docs.flutter.dev/get-started/install)
+- **Dart SDK** (v3.8.1 or higher) - Included with Flutter
 - **Android Studio / VS Code** - IDE with Flutter extensions
 - **Supabase Account** - [Create Account](https://supabase.com)
 - **Alpha Vantage API Key** - [Get Free API Key](https://www.alphavantage.co/support/#api-key)
@@ -264,8 +260,8 @@ finolytica/
 # Install dependencies
 flutter pub get
 
-# Configure API credentials in your development environment
-# Contact developer for configuration details
+# Create a .env file in the project root with:
+# SUPABASE_URL, SUPABASE_ANON_KEY, ALPHA_VANTAGE_API_KEY
 
 # Run the application
 flutter run
@@ -280,9 +276,6 @@ flutter run
 
 **API Key Management:**
 - Environment variables are loaded securely using flutter_dotenv
-- API keys are never exposed in the client side code
-- Production deployments use secure environment variable injection
-- All keys are validated on application startup
 
 **Database Security:**
 - Row Level Security (RLS) policies enforce data isolation
@@ -292,15 +285,16 @@ flutter run
 
 ### Database Setup
 
-The application requires Supabase PostgreSQL database with specific tables and Row Level Security policies. Contact the development team for detailed database schema and setup instructions.
+The application requires Supabase PostgreSQL database with specific tables and Row Level Security policies. 
 
 **Core Tables:**
 - `users` - User profiles and authentication
 - `categories` - Transaction categories with icons and colors  
 - `transactions` - Financial transactions with relationships
 - `savings_goals` - Goal tracking with automated progress
-- `investments` - Portfolio management with real time prices
-
+- `investments` - Portfolio management with current prices
+- `goal_transactions`, `watchlist`, `exchange_rates`
+  
 ### Platform Specific Setup
 
 **iOS Configuration:**
@@ -316,8 +310,7 @@ cd ..
 ```
 
 **Android Configuration:**
-- Minimum SDK: 21 (Android 5.0)
-- Target SDK: 33 (Android 13)
+- Uses Flutter's default minimum and target SDK versions
 - Ensure Google Services are configured for OAuth
 
 ### Development Commands
@@ -331,9 +324,6 @@ flutter build apk --release
 
 # Build for production (iOS) 
 flutter build ios --release
-
-# Run tests
-flutter test
 
 # Analyze code quality
 flutter analyze
@@ -349,14 +339,14 @@ flutter format .
 The application integrates with Alpha Vantage API for real time financial data:
 
 **Supported Endpoints:**
-- `GLOBAL_QUOTE` - Real time stock prices
+- `GLOBAL_QUOTE` - Stock quotes (free plan may be delayed)
 - `CURRENCY_EXCHANGE_RATE` - Forex and crypto rates  
 - `TIME_SERIES_DAILY` - Historical price data
 - `SYMBOL_SEARCH` - Asset symbol lookup
 
 **Example Usage:**
 ```dart
-// Get real-time stock quote
+// Get stock quote (cached for 5 minutes)
 final quote = await AlphaVantageService.getStockQuote('AAPL');
 
 // Get forex rate
@@ -377,19 +367,16 @@ await authService.signInWithGoogle();
 await authService.signInWithEmail(email, password);
 ```
 
-**Real-time Data:**
+**Database function (RPC):**
 ```dart
-// Subscribe to transaction changes
-supabase.from('transactions')
-  .stream(primaryKey: ['id'])
-  .listen((data) => updateUI(data));
+final balance = await SupabaseConfig.client
+    .rpc('calculate_user_balance', params: {'user_uuid': userId});
 ```
 
 ## Performance & Optimization
 
 ### Caching & Data Management
 - **Intelligent Rate Limiting** - 12 second intervals for Alpha Vantage API compliance
-- **Local Data Storage** - Offline first architecture with Supabase synchronization
 - **Memory Management** - GetX automatic disposal and garbage collection
 - **Responsive Design** - Adaptive UI across different screen sizes and orientations
 
@@ -409,7 +396,6 @@ Enterprise grade security measures ensure data integrity, user privacy and secur
 - **Data Encryption** - At rest and in transit data protection
 - **Input Validation** - Comprehensive sanitization and validation
 - **HTTPS Enforcement** - Secure network communications
-- **Privacy Controls** - User data management and deletion capabilities
 
 ### Cross Platform Excellence
 Flutter's native compilation ensures optimal performance across iOS and Android platforms with platform specific optimizations.
