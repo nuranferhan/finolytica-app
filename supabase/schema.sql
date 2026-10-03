@@ -1,3 +1,6 @@
+-- Re-created from the table and RPC names used in the app code
+-- Provided as a reference.
+
 create table if not exists public.users (
   id          uuid primary key references auth.users (id) on delete cascade,
   email       text not null,
