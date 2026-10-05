@@ -5,6 +5,7 @@ import '../../controllers/home_controller.dart';
 import '../../models/transaction.dart';
 import '../../models/category.dart';
 import '../../services/transaction_service.dart';
+import '../../services/grok_service.dart';
 import '../../utils/helpers.dart';
 import '../../utils/constants.dart';
 import '../../core/theme.dart';
@@ -35,6 +36,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
   List<CategoryModel> allCategories = [];
   bool isLoading = true;
 
+  // --- Grok (AI) önerileri ---
+  List<Map<String, dynamic>>? _aiRecommendations;
+  bool _aiLoading = false;
+  String? _aiError;
+  String? _aiCacheKey;
+
   @override
   bool get wantKeepAlive => true;
   
@@ -43,6 +50,12 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _tabController = TabController(length: 5, vsync: this); // 5 tab'e çıkardık
+    _tabController.addListener(() {
+      // 4 = Öneriler sekmesi
+      if (_tabController.index == 4 && !_tabController.indexIsChanging) {
+        _loadAiRecommendations();
+      }
+    });
     _loadAnalyticsData();
     
     ever(homeController.allTransactions, (transactions) {
@@ -103,6 +116,107 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
       if (mounted) {
         setState(() => isLoading = false);
       }
+    }
+  }
+
+  String? _buildAiSummary() {
+    final transactions = filteredTransactions;
+    if (transactions.isEmpty) return null;
+
+    final expenses = transactions.where((t) => t.type == 'expense').toList();
+    final totalIncome = transactions
+        .where((t) => t.type == 'income')
+        .fold(0.0, (sum, t) => sum + t.amount);
+    final totalExpense = expenses.fold(0.0, (sum, t) => sum + t.amount);
+    final categoryAmounts = _getCategoryAmounts(expenses);
+    final smallCount = expenses.where((t) => t.amount < 50.0).length;
+
+    const periodNames = {
+      'daily': 'Günlük',
+      'weekly': 'Haftalık',
+      'monthly': 'Aylık',
+    };
+
+    final buffer = StringBuffer()
+      ..writeln('Dönem: ${periodNames[selectedPeriod] ?? selectedPeriod}')
+      ..writeln('Toplam gelir: ${totalIncome.toStringAsFixed(2)} TL')
+      ..writeln('Toplam gider: ${totalExpense.toStringAsFixed(2)} TL')
+      ..writeln('Bakiye: ${(totalIncome - totalExpense).toStringAsFixed(2)} TL')
+      ..writeln('Gider işlemi sayısı: ${expenses.length}')
+      ..writeln('50 TL altı küçük harcama sayısı: $smallCount')
+      ..writeln('Kategorilere göre giderler:');
+
+    final sorted = categoryAmounts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    for (final e in sorted) {
+      final pct = totalExpense > 0 ? (e.value / totalExpense * 100) : 0.0;
+      buffer.writeln(
+          '- ${e.key}: ${e.value.toStringAsFixed(2)} TL (%${pct.toStringAsFixed(1)})');
+    }
+    return buffer.toString();
+  }
+
+  Map<String, dynamic> _mapAiRecommendation(Map<String, dynamic> r) {
+    final priority = (r['priority'] ?? 'medium').toString();
+    Color color;
+    IconData icon;
+    switch (priority) {
+      case 'high':
+        color = Colors.red;
+        icon = Icons.trending_down;
+        break;
+      case 'low':
+        color = Colors.green;
+        icon = Icons.check_circle;
+        break;
+      default:
+        color = Colors.orange;
+        icon = Icons.lightbulb_outline;
+    }
+    final saving = r['potential_saving'];
+    return {
+      'title': (r['title'] ?? '').toString(),
+      'description': (r['description'] ?? '').toString(),
+      'potential_saving': saving is num ? saving.toDouble() : 0.0,
+      'priority': priority,
+      'icon': icon,
+      'color': color,
+    };
+  }
+
+  Future<void> _loadAiRecommendations({bool force = false}) async {
+    if (!mounted || !GrokService.isConfigured || _aiLoading) return;
+
+    final summary = _buildAiSummary();
+    if (summary == null) return;
+
+    final key = '$selectedPeriod|$summary';
+    if (!force && key == _aiCacheKey) return; // veri değişmediyse tekrar sorma
+
+    setState(() {
+      _aiLoading = true;
+      _aiError = null;
+    });
+
+    try {
+      final result = await GrokService.getRecommendations(summary);
+      if (!mounted) return;
+      final mapped = result
+          .map(_mapAiRecommendation)
+          .where((r) => (r['title'] as String).isNotEmpty)
+          .toList();
+      setState(() {
+        _aiRecommendations = mapped.isEmpty ? null : mapped;
+        _aiCacheKey = key;
+      });
+    } catch (e) {
+      debugPrint('AI önerisi alınamadı: $e');
+      if (mounted) {
+        setState(() => _aiError =
+            'AI önerisi alınamadı, standart öneriler gösteriliyor.');
+      }
+    } finally {
+      if (mounted) setState(() => _aiLoading = false);
     }
   }
 
@@ -732,7 +846,8 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
   }
 
   Widget _buildSmartRecommendations(bool isDark, ThemeData theme) {
-    final recommendations = _generateSmartRecommendations();
+    final recommendations =
+        _aiRecommendations ?? _generateSmartRecommendations();
     
     return Container(
       padding: EdgeInsets.all(16),
@@ -754,16 +869,57 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
             children: [
               Icon(Icons.lightbulb, color: Colors.amber),
               SizedBox(width: 8),
-              Text(
-                'Akıllı Öneriler',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
+              Expanded(
+                child: Text(
+                  'Akıllı Öneriler',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
                 ),
               ),
+              if (_aiRecommendations != null && !_aiLoading)
+                Container(
+                  margin: EdgeInsets.only(right: 4),
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: theme.primaryColor.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    'AI',
+                    style: TextStyle(
+                      color: theme.primaryColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              if (_aiLoading)
+                SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              else if (GrokService.isConfigured)
+                IconButton(
+                  tooltip: 'AI ile yenile',
+                  icon: Icon(Icons.auto_awesome, color: theme.primaryColor),
+                  onPressed: () => _loadAiRecommendations(force: true),
+                ),
             ],
           ),
+          if (_aiError != null) ...[
+            SizedBox(height: 8),
+            Text(
+              _aiError!,
+              style: TextStyle(
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+                fontSize: 12,
+              ),
+            ),
+          ],
           SizedBox(height: 16),
           ...recommendations.map((rec) => _buildRecommendationCard(rec, isDark)),
         ],
