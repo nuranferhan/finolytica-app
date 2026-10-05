@@ -8,10 +8,16 @@ class AppConfig {
   static String get supabaseAnonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
   static String get alphaVantageApiKey => dotenv.env['ALPHA_VANTAGE_API_KEY'] ?? '';
   static String get openAiApiKey => dotenv.env['OPENAI_API_KEY'] ?? '';
+  static String get grokToken => dotenv.env['GROK_TOKEN'] ?? '';
+  static String get grokModel {
+    final m = dotenv.env['GROK_MODEL'] ?? '';
+    return m.isEmpty ? 'grok-latest' : m;
+  }
   
   static const String alphaVantageBaseUrl = 'https://www.alphavantage.co/query';
-
-  static const int maxRequestsPerMinute = 5; // Free plan limiti
+  static const String grokBaseUrl = 'https://api.x.ai/v1/chat/completions';
+  
+  static const int maxRequestsPerMinute = 5; 
   static const Duration requestDelay = Duration(seconds: 12);
   
   static const String defaultCurrency = 'TRY';
