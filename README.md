@@ -10,6 +10,7 @@
 <div align="center">
 <img src="https://img.shields.io/badge/GetX-State%20Management-9C27B0?style=for-the-badge" alt="GetX" />
 <img src="https://img.shields.io/badge/Alpha%20Vantage-Real%20Time%20Data-FF6B35?style=for-the-badge" alt="Alpha Vantage" />
+<img src="https://img.shields.io/badge/Grok%20AI-Smart%20Insights-000000?style=for-the-badge" alt="Grok AI" />
 </div>
 
 <div align="center">
@@ -129,7 +130,8 @@ Advanced analytics system for intelligent financial analysis, personalized recom
 - **Spending Pattern Analysis** - Statistical spending habit recognition
 - **Budget Optimization Suggestions** - Data driven budget allocation recommendations
 - **Financial Health Scoring** - Comprehensive financial wellness assessment
-- **Predictive Analytics** - Future spending forecasts and trend analysis
+- **Predictive Analytics** - Future spending forecasts and trend analysis-
+- **AI Powered Recommendations** - Optional Grok (xAI) integration generates personalized spending advice from your category totals; falls back to rule based suggestions when no token is configured
 - **Personalized Financial Tips** - Contextual advice based on spending behavior
 - **Automated Categorization** - Smart expense category suggestions using rules
 
@@ -156,12 +158,16 @@ The clientside application utilizes **Flutter 3.8.1** with **GetX** state manage
 - **Supabase Flutter 2.9.1** - Real time database client with authentication
 - **FL Chart 0.70.1** - Advanced interactive charting library for financial analytics
 - **Alpha Vantage API** - Real-time financial market data integration
+- **Grok API** - Optional AI-generated financial recommendations
 - **Material Design 3** - Modern UI components with dynamic theming system
 - **GetWidget 4.0.0** - Extended UI component library for rich interfaces
 - **Device Preview 1.1.0** - Multi-device testing and responsive design validation
 
 ### Real Time Financial Data Integration
 The application integrates with **Alpha Vantage API** for comprehensive market data coverage including stocks, forex and cryptocurrency prices with intelligent rate limiting and caching mechanisms.
+
+### AI Powered Insights 
+The Analytics → Recommendations tab can use the **Grok API** to generate personalized advice. Only aggregated data (income, expense and category totals) is sent.
 
 **Market Data Features:**
 - **Stock Market Integration** - Real time quotes for global equity markets
@@ -208,6 +214,7 @@ finolytica/
 │   │   ├── transaction_service.dart         # Transaction CRUD operations
 │   │   ├── investment_service.dart          # Portfolio management service
 │   │   └── alpha_vantage_service.dart       # Market data API integration
+│   │   ├── grok_service.dart                # Optional AI recommendations (Grok/xAI)
 │   ├── controllers/                         # GetX state management controllers
 │   │   ├── auth_controller.dart             # Authentication state management
 │   │   ├── home_controller.dart             # Dashboard state and navigation
@@ -240,6 +247,7 @@ finolytica/
 │   └── main.dart                            # Application entry point with initialization
 ├── assets/                                  # Application assets and resources
 ├── .env                                     # Environment configuration (not included)
+├── .env.example                             # Environment template 
 ├── pubspec.yaml                             # Flutter dependencies and configuration
 └── README.md                                # Project documentation
 ```
@@ -253,18 +261,15 @@ finolytica/
 - **Supabase Account** - [Create Account](https://supabase.com)
 - **Alpha Vantage API Key** - [Get Free API Key](https://www.alphavantage.co/support/#api-key)
 - **Google Cloud Console** - For OAuth configuration
+- **Grok API Key** - [Get API Key](https://console.x.ai) for AI powered recommendations
 
 ### Quick Start
 
 ```bash
-# Install dependencies
-flutter pub get
-
-# Create a .env file in the project root with:
-# SUPABASE_URL, SUPABASE_ANON_KEY, ALPHA_VANTAGE_API_KEY
-
-# Run the application
-flutter run
+# Copy the environment template and fill in your values:
+cp .env.example .env
+# Required: SUPABASE_URL, SUPABASE_ANON_KEY, ALPHA_VANTAGE_API_KEY
+# Optional: GROK_TOKEN (AI recommendations), GROK_MODEL
 ```
 
 ### Configuration Requirements
@@ -273,6 +278,9 @@ flutter run
 - **Supabase Account** - Backend database and authentication
 - **Alpha Vantage API Key** - Real time financial market data
 - **Google OAuth Configuration** - Social authentication setup
+  
+**Optional Services:**
+- **Grok API Key** - AI generated recommendations in the Analytics tab. Without it, rule based recommendations are used.
 
 **API Key Management:**
 - Environment variables are loaded securely using flutter_dotenv
@@ -356,6 +364,20 @@ final rate = await AlphaVantageService.getForexRate('USD', 'TRY');
 final results = await AlphaVantageService.searchSymbols('Apple');
 ```
 
+### Grok Integration
+
+Used only for the optional AI recommendations feature.
+
+- **Endpoint:** `POST https://api.x.ai/v1/chat/completions` (OpenAI compatible)
+- **Config:** `GROK_TOKEN` (required for AI), `GROK_MODEL` (optional, defaults to `grok-latest`)
+- **Data sent:** period, total income/expense, balance, per-category expense totals
+
+```dart
+if (GrokService.isConfigured) {
+  final recs = await GrokService.getRecommendations(summaryText);
+}
+```
+
 ### Supabase Integration
 
 **Authentication:**
@@ -396,6 +418,7 @@ Enterprise grade security measures ensure data integrity, user privacy and secur
 - **Data Encryption** - At rest and in transit data protection
 - **Input Validation** - Comprehensive sanitization and validation
 - **HTTPS Enforcement** - Secure network communications
+- **Privacy Aware AI Calls** - Only aggregated totals are sent to the AI provider, never transaction details
 
 ### Cross Platform Excellence
 Flutter's native compilation ensures optimal performance across iOS and Android platforms with platform specific optimizations.
@@ -420,7 +443,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Tech Stack:** Flutter • Supabase • GetX • Alpha Vantage API • Material Design 3 • PostgreSQL
+**Tech Stack:** Flutter • Supabase • GetX • Alpha Vantage API • Grok (xAI) API • Material Design 3 • PostgreSQL
 
 
 
