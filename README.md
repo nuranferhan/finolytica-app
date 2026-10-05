@@ -214,7 +214,7 @@ finolytica/
 │   │   ├── transaction_service.dart         # Transaction CRUD operations
 │   │   ├── investment_service.dart          # Portfolio management service
 │   │   └── alpha_vantage_service.dart       # Market data API integration
-│   │   ├── grok_service.dart                # Optional AI recommendations (Grok/xAI)
+│   │   ├── grok_service.dart                # AI recommendations (Grok/xAI)
 │   ├── controllers/                         # GetX state management controllers
 │   │   ├── auth_controller.dart             # Authentication state management
 │   │   ├── home_controller.dart             # Dashboard state and navigation
