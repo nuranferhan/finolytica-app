@@ -36,7 +36,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
   List<CategoryModel> allCategories = [];
   bool isLoading = true;
 
-  // --- Grok (AI) önerileri ---
   List<Map<String, dynamic>>? _aiRecommendations;
   bool _aiLoading = false;
   String? _aiError;
@@ -1007,7 +1006,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
     );
   }
 
-  // YENİ: Hedefler Bölümü
   Widget _buildGoalsSection(bool isDark, ThemeData theme) {
     final goals = _calculateFinancialGoals();
     
@@ -1340,7 +1338,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
     final totalExpenses = filteredTransactions.where((t) => t.type == 'expense').fold(0.0, (sum, t) => sum + t.amount.toDouble());
     
     if (totalIncome > 0.0) {
-      // 50/30/20 kuralı önerisi
       suggestions.add({
         'title': '50/30/20 Kuralını Uygulayın',
         'description': 'Gelirin %50\'si ihtiyaçlar, %30\'u istekler, %20\'si tasarruf için ayrılmalı.',
@@ -1377,7 +1374,6 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
     final monthlyExpenses = filteredTransactions.where((t) => t.type == 'expense').fold(0.0, (sum, t) => sum + t.amount);
     final monthlySavings = monthlyIncome - monthlyExpenses;
     
-    // Acil durum fonu
     goals.add({
       'title': 'Acil Durum Fonu',
       'description': '6 aylık harcama tutarı kadar acil durum fonu oluşturun.',
